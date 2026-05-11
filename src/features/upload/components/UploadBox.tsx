@@ -1,12 +1,14 @@
 import { useState, useCallback, useRef } from "react";
 import { useUpload } from "../hooks/useUpload";
 import { useNavigate } from "react-router-dom";
+import { DomainSelector } from "../../../components/simulator/DomainSelector";
 
 const ACCEPTED_TYPES = ["video/mp4", "video/webm", "video/quicktime", "video/x-msvideo"];
 const MAX_SIZE_MB = 500;
 
 const UploadBox = () => {
     const [file, setFile] = useState<File | null>(null);
+    const [domain, setDomain] = useState("bo6");
     const [validationError, setValidationError] = useState<string | null>(null);
     const [isDragging, setIsDragging] = useState(false);
     const { uploadFile, progress, uploading } = useUpload();
@@ -52,7 +54,7 @@ const UploadBox = () => {
     const handleUpload = async () => {
         if (!file) return;
         try {
-            const jobId = await uploadFile(file);
+            const jobId = await uploadFile(file, domain);
             navigate(`/job/${jobId}`);
         } catch {
             setValidationError("Upload failed. Please try again.");
@@ -69,6 +71,15 @@ const UploadBox = () => {
                 <p className="text-sm mt-2" style={{ color: "var(--text-secondary)" }}>
                     Upload a video file to begin AI-powered analysis
                 </p>
+            </div>
+
+            {/* ── Domain Selector ── */}
+            <div className="card p-6">
+                <DomainSelector 
+                    domain={domain} 
+                    onDomainChange={setDomain} 
+                    disabled={uploading} 
+                />
             </div>
 
             {/* ── Drop Zone ── */}

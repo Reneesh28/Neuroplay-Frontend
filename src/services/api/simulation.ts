@@ -1,22 +1,30 @@
-import api from "../axios";
-import type { ApiResponse } from "../../types/api.types";
+import { apiClient } from '../apiClient';
+import { API_ENDPOINTS } from '../../constants/api.constants';
+import type { ApiResponse } from '../../types/api.types';
 
 export interface SimulationInput {
     scenario: string;
+    domain: string;
 }
 
+export interface SimulationResponse {
+    jobId: string;
+}
+
+// Phase 8 output interface (used when job completes)
 export interface SimulationOutput {
     predicted_action: string;
     confidence: number;
     reasoning: string;
     coaching_tip: string;
+    execution_mode: 'FULL' | 'PARTIAL' | 'FALLBACK';
 }
 
 export const runSimulation = async (
     input: SimulationInput
-): Promise<SimulationOutput> => {
-    const res = await api.post<ApiResponse<SimulationOutput>>(
-        "/simulation/run",
+): Promise<SimulationResponse> => {
+    const res = await apiClient.post<ApiResponse<{ job_id: string }>>(
+        API_ENDPOINTS.SIMULATION_RUN,
         input
     );
 
@@ -24,5 +32,6 @@ export const runSimulation = async (
         throw new Error(res.data.error?.message || "Simulation failed");
     }
 
-    return res.data.data;
+    // Backend returns job_id, we map to jobId
+    return { jobId: res.data.data.job_id };
 };

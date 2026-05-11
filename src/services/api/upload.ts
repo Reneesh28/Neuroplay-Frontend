@@ -1,19 +1,26 @@
-import api from "../axios";
+import apiClient from "../apiClient";
+import { API_ENDPOINTS } from "../../constants/api.constants";
 import type { ApiResponse } from "../../types/api.types";
 
 export interface InitUploadResponse {
-    upload_id: string;
+    uploadId: string;
 }
 
 export const initUpload = async (
     fileName: string,
-    totalChunks: number
+    totalChunks: number,
+    userId: string = "demo-user",
+    gameId: string = "bo6"
 ): Promise<InitUploadResponse> => {
-    const res = await api.post<ApiResponse<InitUploadResponse>>(
-        "/upload/init",
+    const res = await apiClient.post<ApiResponse<InitUploadResponse>>(
+        API_ENDPOINTS.UPLOAD_INIT,
         {
-            file_name: fileName,
-            total_chunks: totalChunks,
+            user_id: userId,
+            game_id: gameId,
+            payload: {
+                fileName,
+                totalChunks,
+            },
         }
     );
 
@@ -27,15 +34,21 @@ export const initUpload = async (
 export const uploadChunk = async (
     uploadId: string,
     chunkIndex: number,
-    chunk: Blob
+    chunk: Blob,
+    userId: string = "demo-user",
+    gameId: string = "bo6"
 ) => {
     const formData = new FormData();
 
-    formData.append("upload_id", uploadId);
-    formData.append("chunk_index", String(chunkIndex));
-    formData.append("file", chunk);
+    // 🔥 Backend uploadChunk controller expects these at top level of validatedBody
+    // Note: baseRequestSchema might strip these, but we follow controller contract.
+    formData.append("user_id", userId);
+    formData.append("game_id", gameId);
+    formData.append("uploadId", uploadId);
+    formData.append("chunkIndex", String(chunkIndex));
+    formData.append("chunk", chunk); // Backend expects 'chunk' field name for file
 
-    const res = await api.post("/upload/chunk", formData, {
+    const res = await apiClient.post(API_ENDPOINTS.UPLOAD_CHUNK, formData, {
         headers: {
             "Content-Type": "multipart/form-data",
         },
@@ -45,16 +58,22 @@ export const uploadChunk = async (
 };
 
 export interface CompleteUploadResponse {
-    job_id: string;
+    jobId: string;
 }
 
 export const completeUpload = async (
-    uploadId: string
+    uploadId: string,
+    userId: string = "demo-user",
+    gameId: string = "bo6"
 ): Promise<CompleteUploadResponse> => {
-    const res = await api.post<ApiResponse<CompleteUploadResponse>>(
-        "/upload/complete",
+    const res = await apiClient.post<ApiResponse<CompleteUploadResponse>>(
+        API_ENDPOINTS.UPLOAD_COMPLETE,
         {
-            upload_id: uploadId,
+            user_id: userId,
+            game_id: gameId,
+            payload: {
+                uploadId,
+            },
         }
     );
 

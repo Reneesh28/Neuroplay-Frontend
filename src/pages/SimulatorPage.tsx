@@ -1,40 +1,44 @@
-import SimulatorInput from "../features/simulator/components/SimulatorInput";
-import SimulationResult from "../features/simulator/components/SimulationResult";
-import { useSimulation } from "../features/simulator/hooks/useSimulation";
-
+import { useNavigate } from "react-router-dom";
+import { InputPanel } from "../components/simulator/InputPanel";
+import { useSimulation } from "../hooks/useSimulation";
 import ErrorState from "../components/shared/ErrorState";
 
 const SimulatorPage = () => {
-    const { mutate, data, isPending, error, reset } = useSimulation();
+    const { mutate, isPending, error, reset } = useSimulation();
+    const navigate = useNavigate();
 
-    const handleSubmit = (scenario: string) => {
-        if (!scenario.trim()) return;
-        mutate({ scenario });
+    const handleSubmit = (payload: { scenario: string; domain: string; mode: string }) => {
+        mutate(payload, {
+            onSuccess: (data: any) => {
+                if (data.jobId) {
+                    navigate(`/job/${data.jobId}`);
+                }
+            }
+        });
     };
 
     return (
-        <div className="max-w-2xl mx-auto space-y-6">
+        <div className="max-w-2xl mx-auto space-y-8 py-6">
             {/* ── Page Header ── */}
-            <div>
+            <div className="text-center">
                 <h2 style={{ color: "var(--text-heading)" }}>Scenario Simulator</h2>
-                <p className="text-sm mt-1" style={{ color: "var(--text-secondary)" }}>
-                    Describe a gameplay scenario and get instant AI-powered analysis
+                <p className="text-sm mt-2 max-w-md mx-auto" style={{ color: "var(--text-secondary)" }}>
+                    Configure the digital twin and execute a neural simulation of a specific tactical scenario.
                 </p>
             </div>
 
             {/* ── Input Card ── */}
-            <SimulatorInput onSubmit={handleSubmit} isPending={isPending} />
+            <InputPanel onSubmit={handleSubmit} isPending={isPending} />
 
             {/* ── Error ── */}
             {error && (
-                <ErrorState
-                    message="Simulation failed. Please try again."
-                    onRetry={() => reset()}
-                />
+                <div className="animate-fade-in">
+                    <ErrorState
+                        message={error.message || "Simulation failed to start. Please try again."}
+                        onRetry={() => reset()}
+                    />
+                </div>
             )}
-
-            {/* ── Result ── */}
-            {data && !isPending && <SimulationResult result={data} />}
         </div>
     );
 };

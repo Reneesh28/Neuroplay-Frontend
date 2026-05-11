@@ -15,7 +15,7 @@ export interface JobStep {
 }
 
 export interface Job {
-    job_id: string;
+    id: string;
     status: "queued" | "processing" | "completed" | "failed";
     steps: JobStep[];
     created_at?: string;
