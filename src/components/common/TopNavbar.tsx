@@ -6,6 +6,7 @@ const NAV_LINKS = [
     { to: "/", label: "Ingestion", icon: '🎬' },
     { to: "/insights", label: "Insights", icon: '📊' },
     { to: "/simulator", label: "Simulator", icon: '🧠' },
+    { to: "/neural-universe", label: "Universe", icon: '🌌' },
     { to: "/system", label: "System", icon: '⚙️', adminOnly: true },
     { to: "/admin/dlq", label: "Admin", icon: '🛡️', adminOnly: true },
 ];

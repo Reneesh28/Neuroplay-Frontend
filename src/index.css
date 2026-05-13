@@ -324,3 +324,8 @@ pre {
 .animate-fade-in {
   animation: fade-in var(--transition-base) both;
 }
+/* ?? NEURAL UNIVERSE UTILITIES */
+.glass-panel { background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.08); }
+.text-glow-cyan { text-shadow: 0 0 12px rgba(0, 255, 255, 0.6); }
+.text-glow-orange { text-shadow: 0 0 12px rgba(255, 69, 0, 0.6); }
+.universe-grid { background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.03) 1px, transparent 0); background-size: 40px 40px; }

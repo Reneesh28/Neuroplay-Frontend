@@ -11,4 +11,5 @@ export const API_ENDPOINTS = {
     PROFILE: '/profile',
     AUTH_LOGIN: '/auth/login',
     AUTH_REGISTER: '/auth/register',
+    NEURAL_UNIVERSE_MAP: '/neural-universe/map',
 };

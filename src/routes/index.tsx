@@ -10,7 +10,7 @@ import RegisterPage from '../pages/RegisterPage';
 import InsightsPage from '../pages/InsightsPage';
 import MainLayout from '../layouts/MainLayout';
 import { useSessionStore } from '../features/auth/stores/sessionStore';
-
+import NeuralUniversePage from '../features/neural-universe/pages/NeuralUniversePage';
 /**
  * 🛡️ Protected Route Wrapper
  * Enforces session token presence and wraps content in the Main application layout.
@@ -85,6 +85,7 @@ export const AppRoutes = () => {
             <Route path="/simulator" element={<ProtectedRoute><SimulatorPage /></ProtectedRoute>} />
             <Route path="/system" element={<ProtectedRoute><AdminRoute><SystemPage /></AdminRoute></ProtectedRoute>} />
             <Route path="/admin/dlq" element={<ProtectedRoute><AdminRoute><AdminDLQPage /></AdminRoute></ProtectedRoute>} />
+            <Route path="/neural-universe" element={<ProtectedRoute><NeuralUniversePage /></ProtectedRoute>} />
 
             {/* 404 handler wrapped in MainLayout for consistency if logged in, or simple if not? 
                 Let's keep it simple for now or wrap it if token exists. 
