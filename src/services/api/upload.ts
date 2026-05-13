@@ -8,15 +8,11 @@ export interface InitUploadResponse {
 
 export const initUpload = async (
     fileName: string,
-    totalChunks: number,
-    userId: string = "demo-user",
-    gameId: string = "bo6"
+    totalChunks: number
 ): Promise<InitUploadResponse> => {
     const res = await apiClient.post<ApiResponse<InitUploadResponse>>(
         API_ENDPOINTS.UPLOAD_INIT,
         {
-            user_id: userId,
-            game_id: gameId,
             payload: {
                 fileName,
                 totalChunks,
@@ -34,19 +30,14 @@ export const initUpload = async (
 export const uploadChunk = async (
     uploadId: string,
     chunkIndex: number,
-    chunk: Blob,
-    userId: string = "demo-user",
-    gameId: string = "bo6"
+    chunk: Blob
 ) => {
     const formData = new FormData();
-
-    // 🔥 Backend uploadChunk controller expects these at top level of validatedBody
-    // Note: baseRequestSchema might strip these, but we follow controller contract.
-    formData.append("user_id", userId);
-    formData.append("game_id", gameId);
-    formData.append("uploadId", uploadId);
-    formData.append("chunkIndex", String(chunkIndex));
-    formData.append("chunk", chunk); // Backend expects 'chunk' field name for file
+    
+    // Identity fields are injected by the interceptor
+    // Payload is wrapped for the middleware
+    formData.append("payload", JSON.stringify({ uploadId, chunkIndex }));
+    formData.append("chunk", chunk);
 
     const res = await apiClient.post(API_ENDPOINTS.UPLOAD_CHUNK, formData, {
         headers: {
@@ -62,15 +53,11 @@ export interface CompleteUploadResponse {
 }
 
 export const completeUpload = async (
-    uploadId: string,
-    userId: string = "demo-user",
-    gameId: string = "bo6"
+    uploadId: string
 ): Promise<CompleteUploadResponse> => {
     const res = await apiClient.post<ApiResponse<CompleteUploadResponse>>(
         API_ENDPOINTS.UPLOAD_COMPLETE,
         {
-            user_id: userId,
-            game_id: gameId,
             payload: {
                 uploadId,
             },

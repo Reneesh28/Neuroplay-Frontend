@@ -1,68 +1,96 @@
-import { ResultPanel } from "../../../components/results/ResultPanel";
-import { ContextPanel } from "../../../components/results/ContextPanel";
+import React from 'react';
+import { ExecutionModeBadge } from '../../../components/results/ExecutionModeBadge';
+import { PredictionCard } from '../../../components/results/PredictionCard';
+import { ReasoningPanel } from '../../../components/results/ReasoningPanel';
+import { CoachingPanel } from '../../../components/results/CoachingPanel';
+import { StatsCard } from './StatsCard';
 
 const DashboardView = ({ data }: { data: any }) => {
     if (!data) return null;
 
-    // Normalize data for ResultPanel
-    const resultPayload = {
-        predicted_action: data.predicted_action,
-        confidence: data.confidence,
-        reasoning: data.reasoning,
-        coaching_tip: data.coaching_tip,
-        execution_mode: data.execution_mode || 'FULL'
-    };
-
-    // Extract context, potentially from data.context or construct it if backend spreads it
-    const contextData = data.context || {
-        profile: data.profile || { rank: "PLATINUM-IV", playstyle: "LURK_ENTRY", aggression_score: 72, stability_score: 88 },
-        memories: data.memories || [
-            { text: "Player historically pushes A-Main without utility support.", distance: 0.18 }
-        ]
-    };
+    // Handle reasoning array or string
+    const reasoningText = Array.isArray(data.reasoning)
+        ? data.reasoning.join(" ")
+        : data.reasoning || "No detailed reasoning provided.";
 
     return (
-        <div className="space-y-10 animate-fade-up">
-            {/* ── Operational Header ── */}
-            <div className="flex flex-col sm:flex-row items-center sm:items-end justify-between gap-6 pb-6 border-b border-white/5">
-                <div className="space-y-2 text-center sm:text-left">
-                    <div className="flex items-center justify-center sm:justify-start gap-3">
-                        <div className="w-2 h-8 bg-accent rounded-full" />
-                        <h1 className="text-3xl font-black tracking-tighter uppercase" style={{ color: "var(--text-heading)" }}>
-                            Intelligence Report
-                        </h1>
-                    </div>
-                    <p className="text-sm font-medium opacity-40 uppercase tracking-[0.2em] ml-5">
-                        Inference Node: {data.id?.slice(0, 12) || 'NP-ALPHA-01'}
-                    </p>
-                </div>
-
-                <div className="flex items-center gap-4">
-                    <div className="text-right hidden sm:block">
-                        <p className="text-[10px] font-bold uppercase tracking-widest opacity-30">Classification</p>
-                        <p className="text-xs font-mono font-bold text-emerald-400">UNRESTRICTED_ACCESS</p>
-                    </div>
-                    <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-xl">
-                        📊
-                    </div>
-                </div>
+        <div className="max-w-3xl mx-auto space-y-12 animate-fade-in pb-20">
+            {/* Header section */}
+            <div className="border-b border-white/20 pb-6">
+                <h1 className="text-3xl font-bold text-white tracking-tight mb-2">Gameplay Analysis Report</h1>
+                <p className="text-sm text-gray-400">Inference Node: {data.id?.slice(0, 12)} | {new Date(data.metadata?.created_at).toLocaleString()}</p>
             </div>
 
-            {/* ── Primary Analysis Results ── */}
-            <ResultPanel result={resultPayload} />
-
-            {/* ── Behavioral Context & History ── */}
-            <ContextPanel context={contextData} />
-            
-            {/* ── Footer Metadata ── */}
-            <div className="pt-12 pb-6 flex flex-col sm:flex-row items-center justify-between gap-4 opacity-20 text-[10px] font-mono uppercase tracking-widest">
-                <span>© 2026 NeuroPlay Engine — Phase 8.9 Deployment</span>
-                <div className="flex gap-6">
-                    <span>Latency: 44ms</span>
-                    <span>Tokens: 1,402</span>
-                    <span>Sig: 0x88AB</span>
+            {/* Main Insights Section */}
+            <section className="space-y-6">
+                <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                    <h2 className="text-xl font-bold text-white uppercase tracking-wider">Primary Intelligence</h2>
+                    <ExecutionModeBadge mode={data.execution_mode || "FULL"} />
                 </div>
-            </div>
+                
+                <PredictionCard 
+                    action={data.predicted_action} 
+                    mode={data.execution_mode || "FULL"} 
+                />
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <StatsCard 
+                        label="Confidence Score" 
+                        value={`${Math.round((data.confidence || 0) * 100)}%`}
+                        trend={data.confidence > 0.8 ? "optimal" : data.confidence > 0.6 ? "stable" : "nominal"}
+                    />
+                    <StatsCard 
+                        label="Trace Identity" 
+                        value={data.metadata?.trace_id?.slice(0, 12) || "N/A"}
+                        icon="🆔"
+                    />
+                </div>
+            </section>
+
+            {/* Detailed Description / Reasoning */}
+            <section className="space-y-4">
+                <h2 className="text-xl font-semibold text-white border-b border-white/10 pb-2">Detailed Gameplay Description</h2>
+                <ReasoningPanel reasoning={reasoningText} />
+            </section>
+
+            {/* Coaching Tip */}
+            <section className="space-y-4">
+                <h2 className="text-xl font-semibold text-white border-b border-white/10 pb-2">Coaching & Strategy</h2>
+                <CoachingPanel tip={data.coaching_tip || "No specific guidance generated."} />
+            </section>
+
+            {/* Player Context & Patterns */}
+            <section className="space-y-4">
+                <h2 className="text-xl font-semibold text-white border-b border-white/10 pb-2">Behavioral Patterns</h2>
+                {data.patterns && data.patterns.length > 0 ? (
+                    <ul className="list-disc pl-5 space-y-3 text-gray-300">
+                        {data.patterns.map((p: any) => (
+                            <li key={p.id}>
+                                <strong className="text-white">{p.type}</strong>: {p.description} <span className="text-gray-500 text-sm">(Frequency: {p.frequency})</span>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p className="text-gray-500 italic">No historical patterns discovered.</p>
+                )}
+            </section>
+
+            {/* Telemetry (Clean Table) */}
+            {data.features && Object.keys(data.features).length > 0 && (
+                <section className="space-y-4">
+                    <h2 className="text-xl font-semibold text-white border-b border-white/10 pb-2">Extracted Telemetry</h2>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                        {Object.entries(data.features).map(([key, value]) => (
+                            <div key={key} className="p-4 bg-white/5 rounded-md border border-white/10">
+                                <div className="text-xs text-gray-400 uppercase tracking-wider mb-1">{key.replace(/_/g, ' ')}</div>
+                                <div className="text-lg text-white font-medium">
+                                    {typeof value === 'number' ? (value < 1 ? value.toFixed(2) : Math.round(value)) : String(value)}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            )}
         </div>
     );
 };

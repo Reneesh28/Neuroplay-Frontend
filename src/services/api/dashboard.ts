@@ -3,13 +3,19 @@ import { API_ENDPOINTS } from "../../constants/api.constants";
 import type { ApiResponse } from "../../types/api.types";
 
 export interface DashboardData {
+    id: string;
+    status: "queued" | "processing" | "completed" | "failed";
+    execution_mode?: string;
+    predicted_action: string;
+    confidence: number;
+    reasoning: string[];
+    coaching_tip: string;
+    features?: Record<string, number>; // 🔥 Added telemetry
     profile: any;
-    segments: any[];
     patterns: any[];
-    insights: {
-        total_tactical_actions: number;
-        average_confidence: number;
-        primary_style: string;
+    metadata: {
+        trace_id: string;
+        created_at: string;
     };
 }
 
@@ -19,9 +25,9 @@ export interface DashboardData {
  * Fetches domain-scoped insights and analytics.
  * Per Flow 3 in End-to-End System Flows.
  */
-export const getDashboardData = async (sessionId: string): Promise<DashboardData> => {
+export const getDashboardData = async (jobId: string): Promise<DashboardData> => {
     const res = await apiClient.get<ApiResponse<DashboardData>>(
-        API_ENDPOINTS.DASHBOARD(sessionId)
+        `${API_ENDPOINTS.DASHBOARD}/${jobId}`
     );
 
     if (!res.data.success) {

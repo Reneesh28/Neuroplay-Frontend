@@ -4,7 +4,7 @@ import type { ApiResponse } from '../../types/api.types';
 
 export interface SimulationInput {
     scenario: string;
-    domain: string;
+    domain?: string;
 }
 
 export interface SimulationResponse {
@@ -15,7 +15,7 @@ export interface SimulationResponse {
 export interface SimulationOutput {
     predicted_action: string;
     confidence: number;
-    reasoning: string;
+    reasoning: string | string[];
     coaching_tip: string;
     execution_mode: 'FULL' | 'PARTIAL' | 'FALLBACK';
 }
@@ -23,9 +23,16 @@ export interface SimulationOutput {
 export const runSimulation = async (
     input: SimulationInput
 ): Promise<SimulationResponse> => {
+    const { scenario, domain } = input;
+    
     const res = await apiClient.post<ApiResponse<{ job_id: string }>>(
         API_ENDPOINTS.SIMULATION_RUN,
-        input
+        {
+            domain,
+            payload: {
+                scenario
+            }
+        }
     );
 
     if (!res.data.success) {

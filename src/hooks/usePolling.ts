@@ -34,6 +34,12 @@ export function usePolling<T>({
         };
     }, []);
 
+    const [isStale, setIsStale] = useState(false);
+    const lastDataRef = useRef<string>("");
+    const sameDataCountRef = useRef(0);
+
+    const STALE_THRESHOLD = 50; // Flag as stale if no changes in 50 attempts
+
     const stopPolling = useCallback(() => {
         setIsPolling(false);
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -46,6 +52,20 @@ export function usePolling<T>({
             const result = await fetchFn();
 
             if (!isMounted.current) return;
+
+            // 🔥 Stale detection logic
+            const currentDataStr = JSON.stringify(result);
+            if (currentDataStr === lastDataRef.current) {
+                sameDataCountRef.current += 1;
+            } else {
+                sameDataCountRef.current = 0;
+                lastDataRef.current = currentDataStr;
+                setIsStale(false);
+            }
+
+            if (sameDataCountRef.current >= STALE_THRESHOLD) {
+                setIsStale(true);
+            }
 
             setData(result);
             setError(null);
@@ -61,7 +81,7 @@ export function usePolling<T>({
 
             if (attemptsRef.current >= maxAttempts) {
                 stopPolling();
-                const timeoutError = new Error('Polling timeout: max attempts reached');
+                const timeoutError = new Error('TIMEOUT');
                 setError(timeoutError);
                 onError?.(timeoutError);
                 return;
@@ -70,16 +90,23 @@ export function usePolling<T>({
             timeoutRef.current = setTimeout(poll, interval);
         } catch (err) {
             if (!isMounted.current) return;
-            setError(err);
+            
+            // Classify error
+            const classifiedError = (err as any).error?.code === 'NETWORK_ERROR' ? new Error('NETWORK') : err;
+            
+            setError(classifiedError);
             stopPolling();
-            onError?.(err);
+            onError?.(classifiedError);
         }
     }, [fetchFn, shouldStop, interval, maxAttempts, onSuccess, onError, stopPolling]);
 
     const startPolling = useCallback(() => {
         setAttempts(0);
         attemptsRef.current = 0;
+        sameDataCountRef.current = 0;
+        lastDataRef.current = "";
         setIsPolling(true);
+        setIsStale(false);
         setData(null);
         setError(null);
         poll();
@@ -89,6 +116,7 @@ export function usePolling<T>({
         data,
         error,
         isPolling,
+        isStale,
         attempts,
         startPolling,
         stopPolling,

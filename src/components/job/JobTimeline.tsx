@@ -11,6 +11,15 @@ interface JobTimelineProps {
     steps: JobStep[];
 }
 
+const STEP_DESCRIPTIONS: Record<string, string> = {
+    video_processing: "Normalizing frame data and extracting optical vectors",
+    feature_extraction: "Calculating reaction times and movement variance",
+    embedding_generation: "Projecting behavior into high-dimensional space",
+    memory_retrieval: "Querying vector DB for historical pattern matches",
+    simulation: "Executing multi-agent tactical inference",
+    default: "Ingesting tactical vectors..."
+};
+
 export const JobTimeline: React.FC<JobTimelineProps> = ({ steps }) => {
     if (!steps || steps.length === 0) return null;
 
@@ -24,7 +33,7 @@ export const JobTimeline: React.FC<JobTimelineProps> = ({ steps }) => {
                 <div className="flex items-center gap-2">
                     <span className="text-sm">📟</span>
                     <p className="text-[10px] font-bold uppercase tracking-[0.2em]" style={{ color: 'var(--text-muted)' }}>
-                        System Execution Trace
+                        Neural Execution Trace
                     </p>
                 </div>
                 <div className="flex gap-1">
@@ -52,6 +61,8 @@ export const JobTimeline: React.FC<JobTimelineProps> = ({ steps }) => {
                     if (isProcessing) statusColor = 'var(--accent)';
                     if (isFailed) statusColor = 'var(--status-failed)';
 
+                    const stepDescription = STEP_DESCRIPTIONS[step.name] || STEP_DESCRIPTIONS.default;
+
                     return (
                         <div
                             key={index}
@@ -70,7 +81,7 @@ export const JobTimeline: React.FC<JobTimelineProps> = ({ steps }) => {
                                             {step.name.replace(/_/g, ' ')}
                                         </h4>
                                         <p className="text-[10px] font-mono opacity-30 uppercase tracking-widest">
-                                            Worker: Node-AI-Simulation-{index + 1}
+                                            Inference Node: AI-SIGMA-{(index % 4) + 1}
                                         </p>
                                     </div>
                                     
@@ -83,7 +94,7 @@ export const JobTimeline: React.FC<JobTimelineProps> = ({ steps }) => {
                                         </span>
                                         {isProcessing && (
                                             <p className="text-[9px] mt-1 italic animate-pulse" style={{ color: statusColor }}>
-                                                Ingesting tactical vectors...
+                                                {stepDescription}
                                             </p>
                                         )}
                                     </div>

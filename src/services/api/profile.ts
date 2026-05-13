@@ -19,7 +19,7 @@ export interface DigitalTwinProfile {
  */
 export const getProfile = async (userId: string): Promise<DigitalTwinProfile> => {
     const res = await apiClient.get<ApiResponse<DigitalTwinProfile>>(
-        API_ENDPOINTS.PROFILE(userId)
+        `${API_ENDPOINTS.PROFILE}/${userId}`
     );
 
     if (!res.data.success) {
@@ -31,7 +31,7 @@ export const getProfile = async (userId: string): Promise<DigitalTwinProfile> =>
 
 export const updateProfile = async (userId: string, data: Partial<DigitalTwinProfile>) => {
     const res = await apiClient.patch<ApiResponse<DigitalTwinProfile>>(
-        API_ENDPOINTS.PROFILE(userId),
+        `${API_ENDPOINTS.PROFILE}/${userId}`,
         data
     );
 

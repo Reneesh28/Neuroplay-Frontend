@@ -5,8 +5,10 @@ export const API_ENDPOINTS = {
     UPLOAD_CHUNK: '/upload/chunk',
     UPLOAD_COMPLETE: '/upload/complete',
     SIMULATION_RUN: '/simulation/run',
-    JOB_STATUS: (id: string) => `/job/${id}`,
-    DASHBOARD: (id: string) => `/dashboard/${id}`,
+    JOB_STATUS: '/job',
+    DASHBOARD: '/dashboard',
     COACH_GENERATE: '/coach/generate',
-    PROFILE: (id: string) => `/profile/${id}`,
+    PROFILE: '/profile',
+    AUTH_LOGIN: '/auth/login',
+    AUTH_REGISTER: '/auth/register',
 };

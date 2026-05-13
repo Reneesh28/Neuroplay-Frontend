@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { getJobResult } from "../../../services/api/job";
+import { getDashboardData } from "../../../services/api/dashboard";
 
 export const useResult = (jobId: string, enabled: boolean) => {
     return useQuery({
         queryKey: ["result", jobId],
-        queryFn: () => getJobResult(jobId),
-        enabled, // only fetch when job completed
+        queryFn: () => getDashboardData(jobId),
+        enabled: !!jobId && enabled,
     });
 };

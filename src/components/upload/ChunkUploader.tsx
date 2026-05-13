@@ -5,12 +5,17 @@ import { FilePreview } from './FilePreview';
 import { UploadErrorBanner } from './UploadErrorBanner';
 import { useUpload } from '../../features/upload/hooks/useUpload';
 import { useNavigate } from 'react-router-dom';
+import { DomainSelector } from '../simulator/DomainSelector';
+import { useSessionStore } from '../../features/auth/stores/sessionStore';
 
 export const ChunkUploader = () => {
     const [file, setFile] = useState<File | null>(null);
     const [uploadError, setUploadError] = useState<string | null>(null);
     const { uploadFile, progress, uploading } = useUpload();
     const navigate = useNavigate();
+
+    // Sync domain with global session store
+    const { gameId, setSession, userId, token } = useSessionStore();
 
     const handleUpload = async () => {
         if (!file) return;
@@ -28,21 +33,32 @@ export const ChunkUploader = () => {
 
     return (
         <div className="max-w-xl mx-auto space-y-6">
+            {/* ── Domain Selector ── */}
+            {!uploading && (
+                <div className="card p-6 mb-6">
+                    <DomainSelector
+                        domain={gameId}
+                        onDomainChange={(newDomain) => setSession(userId, newDomain, token)}
+                        disabled={uploading || !!file}
+                    />
+                </div>
+            )}
+
             {!file && !uploading && (
                 <UploadDropzone onFileSelect={setFile} disabled={uploading} />
             )}
 
             {file && !uploading && (
                 <div className="space-y-6 animate-fade-up">
-                    <FilePreview 
-                        file={file} 
-                        onClear={() => setFile(null)} 
-                        disabled={uploading} 
+                    <FilePreview
+                        file={file}
+                        onClear={() => setFile(null)}
+                        disabled={uploading}
                     />
-                    
+
                     {uploadError && (
-                        <UploadErrorBanner 
-                            error={uploadError} 
+                        <UploadErrorBanner
+                            error={uploadError}
                             onRetry={handleUpload}
                             onClear={() => setUploadError(null)}
                         />
@@ -66,7 +82,7 @@ export const ChunkUploader = () => {
                     </div>
 
                     <UploadProgress progress={progress} />
-                    
+
                     <div className="grid grid-cols-2 gap-4">
                         <div className="card p-4 text-center">
                             <p className="text-[10px] uppercase tracking-widest opacity-40 mb-1">Status</p>

@@ -7,7 +7,7 @@ interface DomainSelectorProps {
 const DOMAINS = [
     { id: 'bo6', label: 'Black Ops', desc: 'Arcade FPS Logic', icon: '🎯', color: '#f97316' },
     { id: 'mw3', label: 'Modern Warfare', desc: 'Tactical Realism Logic', icon: '🎖️', color: '#10b981' },
-    { id: 'valorant', label: 'Valorant', desc: 'Ability Logic (Experimental)', icon: '✨', color: '#ff4655' },
+    { id: 'wz', label: 'Warzone', desc: 'Battle Royale Logic', icon: '🪂', color: '#ff4655' },
 ];
 
 export const DomainSelector = ({ domain, onDomainChange, disabled }: DomainSelectorProps) => {

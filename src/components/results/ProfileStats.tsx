@@ -3,9 +3,10 @@ import React from 'react';
 interface ProfileStatsProps {
     profile: {
         rank?: string;
-        playstyle?: string;
+        preferred_style?: string;
         aggression_score?: number;
-        stability_score?: number;
+        adaptability_score?: number;
+        total_simulations?: number;
         [key: string]: any;
     };
 }
@@ -31,12 +32,12 @@ export const ProfileStats: React.FC<ProfileStatsProps> = ({ profile }) => {
             
             <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                    <p className="text-[10px] uppercase tracking-wider opacity-40">Classification</p>
-                    <p className="text-sm font-black text-white">{profile.rank || 'PLATINUM-IV'}</p>
+                    <p className="text-[10px] uppercase tracking-wider opacity-40">Simulations</p>
+                    <p className="text-sm font-black text-white">{profile.total_simulations || 0} Runs</p>
                 </div>
                 <div className="space-y-1 text-right">
                     <p className="text-[10px] uppercase tracking-wider opacity-40">Archetype</p>
-                    <p className="text-sm font-black text-white capitalize">{profile.playstyle || 'LURK_ENTRY'}</p>
+                    <p className="text-sm font-black text-white capitalize">{profile.preferred_style?.replace('_', ' ') || 'UNKNOWN'}</p>
                 </div>
             </div>
 
@@ -45,15 +46,14 @@ export const ProfileStats: React.FC<ProfileStatsProps> = ({ profile }) => {
                     <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
                         <span style={{ color: '#f87171' }}>Aggression</span>
                         <div className="flex items-center gap-2">
-                            <span className="text-[9px] text-emerald-400">+{profile.aggression_delta || 2}%</span>
-                            <span className="opacity-50">{(profile.aggression_score || 72)}%</span>
+                            <span className="opacity-50">{Math.round((profile.aggression_score || 0.5) * 100)}%</span>
                         </div>
                     </div>
                     <div className="w-full h-1 rounded-full bg-white/5 overflow-hidden">
                         <div 
                             className="h-full rounded-full transition-all duration-1000 ease-out"
                             style={{ 
-                                width: `${(profile.aggression_score || 72)}%`, 
+                                width: `${Math.round((profile.aggression_score || 0.5) * 100)}%`, 
                                 background: 'linear-gradient(90deg, #ef4444, #f87171)',
                                 boxShadow: '0 0 10px rgba(239, 68, 68, 0.3)'
                             }}
@@ -63,17 +63,16 @@ export const ProfileStats: React.FC<ProfileStatsProps> = ({ profile }) => {
 
                 <div className="space-y-1.5">
                     <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
-                        <span style={{ color: '#60a5fa' }}>Stability</span>
+                        <span style={{ color: '#60a5fa' }}>Adaptability</span>
                         <div className="flex items-center gap-2">
-                            <span className="text-[9px] text-rose-400">-{profile.stability_delta || 1}%</span>
-                            <span className="opacity-50">{(profile.stability_score || 88)}%</span>
+                            <span className="opacity-50">{Math.round((profile.adaptability_score || 0.5) * 100)}%</span>
                         </div>
                     </div>
                     <div className="w-full h-1 rounded-full bg-white/5 overflow-hidden">
                         <div 
                             className="h-full rounded-full transition-all duration-1000 ease-out"
                             style={{ 
-                                width: `${(profile.stability_score || 88)}%`, 
+                                width: `${Math.round((profile.adaptability_score || 0.5) * 100)}%`, 
                                 background: 'linear-gradient(90deg, #3b82f6, #60a5fa)',
                                 boxShadow: '0 0 10px rgba(59, 130, 246, 0.3)'
                             }}

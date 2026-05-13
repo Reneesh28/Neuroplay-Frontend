@@ -1,30 +1,46 @@
-import apiClient from "../apiClient";
-import { API_ENDPOINTS } from "../../constants/api.constants";
-import type { ApiResponse } from "../../types/api.types";
-import type { Job } from "../../types/job.types";
+import { apiClient } from '../apiClient';
+import { API_ENDPOINTS } from '../../constants/api.constants';
+import type { ApiResponse } from '../../types/api.types';
 
-export const getJobStatus = async (jobId: string): Promise<Job> => {
-    const res = await apiClient.get<ApiResponse<Job>>(
-        API_ENDPOINTS.JOB_STATUS(jobId)
-    );
+export interface JobStep {
+    name: string;
+    status: 'pending' | 'processing' | 'completed' | 'failed';
+    output_ref?: string;
+    execution_mode?: 'FULL' | 'PARTIAL' | 'FALLBACK';
+}
 
+export interface JobStatus {
+    job_id: string;
+    status: 'pending' | 'processing' | 'completed' | 'failed';
+    current_step: string;
+    progress: number;
+    steps: JobStep[];
+}
+
+export const getJobStatus = async (id: string): Promise<JobStatus> => {
+    const res = await apiClient.get<ApiResponse<JobStatus>>(`${API_ENDPOINTS.JOB_STATUS}/${id}`);
+    
     if (!res.data.success) {
-        throw new Error(res.data.error?.message || "Failed to fetch job");
+        throw new Error(res.data.error?.message || "Failed to fetch job status");
     }
-
+    
     return res.data.data;
 };
 
-// Backend returns everything in getJob, so we map the output field
-export const getJobResult = async (jobId: string) => {
-    const res = await apiClient.get<ApiResponse<any>>(
-        API_ENDPOINTS.JOB_STATUS(jobId)
-    );
-
+export const getUserJobs = async (): Promise<JobStatus[]> => {
+    const res = await apiClient.get<ApiResponse<JobStatus[]>>(API_ENDPOINTS.JOB_STATUS);
+    
     if (!res.data.success) {
-        throw new Error(res.data.error?.message || "Failed to fetch result");
+        throw new Error(res.data.error?.message || "Failed to fetch user jobs");
     }
+    
+    return res.data.data;
+};
 
-    // Backend returns result in the 'output' field of job
-    return res.data.data.output;
+export const replayJob = async (bullJobId: string): Promise<void> => {
+    const res = await apiClient.post<ApiResponse<void>>(`${API_ENDPOINTS.JOB_STATUS}/dlq/${bullJobId}/replay`);
+    
+    if (!res.data.success) {
+        throw new Error(res.data.error?.message || "Failed to replay job");
+    }
 };

@@ -11,14 +11,14 @@ export const useUpload = () => {
     const [progress, setProgress] = useState(0);
     const [uploading, setUploading] = useState(false);
 
-    const uploadFile = async (file: File, gameId: string = "bo6"): Promise<string> => {
+    const uploadFile = async (file: File): Promise<string> => {
         setUploading(true);
 
         try {
             const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
 
             // 1. INIT
-            const { uploadId } = await initUpload(file.name, totalChunks, "demo-user", gameId);
+            const { uploadId } = await initUpload(file.name, totalChunks);
 
             // 2. CHUNK UPLOAD
             for (let i = 0; i < totalChunks; i++) {
@@ -32,7 +32,7 @@ export const useUpload = () => {
 
                 while (retryCount < maxRetries && !success) {
                     try {
-                        await uploadChunk(uploadId, i, chunk, "demo-user", gameId);
+                        await uploadChunk(uploadId, i, chunk);
                         success = true;
                     } catch (err) {
                         retryCount++;
@@ -46,7 +46,7 @@ export const useUpload = () => {
             }
 
             // 3. COMPLETE
-            const { jobId } = await completeUpload(uploadId, "demo-user", gameId);
+            const { jobId } = await completeUpload(uploadId);
 
             return jobId;
         } catch (error) {
