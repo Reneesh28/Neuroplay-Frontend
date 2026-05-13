@@ -39,6 +39,7 @@
 3. **View** AI-generated insights — predicted actions, confidence scores, reasoning, and coaching tips
 4. **Simulate** hypothetical gameplay scenarios with instant AI analysis
 5. **Explore** analysis results via a dedicated dashboard view
+6. **Visualize** intelligence in the **Neural Memory Universe** — a 3D galaxy visualization of vector memories, clusters, and live retrieval paths.
 
 The UI is designed as a premium, dark-mode AI product interface with production-grade UX patterns including loading states, error boundaries, retry mechanisms, and micro-interactions.
 
@@ -285,7 +286,18 @@ const api = axios.create({
 | Result card | Action, confidence bar, reasoning, coaching tip |
 | Error retry | Reset mutation and retry via button |
 
-### 5. 404 Page (`/*`)
+### 5. Neural Memory Universe Page (`/neural-universe`)
+
+| Feature | Detail |
+|---------|--------|
+| 3D Galaxy Engine | Cinematic Three.js visualization of FAISS vector space |
+| Domain Separation | Distinct 3D regions for Black Ops and Modern Warfare |
+| Digital Twin Cores | Pulsing emissive entities representing player behavioral styles |
+| Retrieval Traversal | Real-time particle animation of active neural retrieval paths |
+| Tactical Tooltip | On-demand metadata for specific memory clusters |
+| Render Diagnostics | Live FPS and node count monitoring |
+
+### 6. 404 Page (`/*`)
 
 Styled not-found page with a back-to-upload CTA button.
 
