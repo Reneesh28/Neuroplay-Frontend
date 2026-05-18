@@ -15,18 +15,22 @@ import NeuralUniversePage from '../features/neural-universe/pages/NeuralUniverse
  * 🛡️ Protected Route Wrapper
  * Enforces session token presence and wraps content in the Main application layout.
  */
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+const ProtectedRoute = ({ children, withLayout = true }: { children: React.ReactNode, withLayout?: boolean }) => {
     const { token } = useSessionStore();
 
     if (!token) {
         return <Navigate to="/login" replace />;
     }
 
-    return (
-        <MainLayout>
-            {children}
-        </MainLayout>
-    );
+    if (withLayout) {
+        return (
+            <MainLayout>
+                {children}
+            </MainLayout>
+        );
+    }
+
+    return <>{children}</>;
 };
 
 /**
@@ -85,7 +89,7 @@ export const AppRoutes = () => {
             <Route path="/simulator" element={<ProtectedRoute><SimulatorPage /></ProtectedRoute>} />
             <Route path="/system" element={<ProtectedRoute><AdminRoute><SystemPage /></AdminRoute></ProtectedRoute>} />
             <Route path="/admin/dlq" element={<ProtectedRoute><AdminRoute><AdminDLQPage /></AdminRoute></ProtectedRoute>} />
-            <Route path="/neural-universe" element={<ProtectedRoute><NeuralUniversePage /></ProtectedRoute>} />
+            <Route path="/neural-universe" element={<ProtectedRoute withLayout={false}><NeuralUniversePage /></ProtectedRoute>} />
 
             {/* 404 handler wrapped in MainLayout for consistency if logged in, or simple if not? 
                 Let's keep it simple for now or wrap it if token exists. 

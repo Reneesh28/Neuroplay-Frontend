@@ -14,7 +14,7 @@ import { useSessionStore } from '../features/auth/stores/sessionStore';
 
 export const apiClient = axios.create({
     baseURL: API_BASE_URL,
-    timeout: 30000,
+    timeout: 120000,
     headers: {
         'Content-Type': 'application/json',
         'x-api-version': 'v1',

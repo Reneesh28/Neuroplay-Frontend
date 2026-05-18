@@ -6,29 +6,29 @@
    DESIGN TOKENS
 ────────────────────────────────────────── */
 :root {
-  /* Surfaces */
-  --bg-base: #080b11;
-  --bg-surface: #0d1117;
-  --bg-elevated: #111827;
-  --bg-card: #161d2b;
+  /* Surfaces - Institutional Charcoal & Deep Slate */
+  --bg-base: #06080c;
+  --bg-surface: #0c0f16;
+  --bg-elevated: #171e2e;
+  --bg-card: #111622;
   --bg-muted: #1c2333;
 
   /* Borders */
-  --border: #1e2a3a;
-  --border-muted: #243040;
-  --border-glow: rgba(99, 179, 237, 0.25);
+  --border: rgba(255, 255, 255, 0.05);
+  --border-muted: rgba(255, 255, 255, 0.1);
+  --border-glow: rgba(0, 240, 255, 0.15);
 
   /* Text */
   --text-primary: #e2e8f0;
-  --text-secondary: #8899aa;
-  --text-muted: #4a5568;
-  --text-heading: #f0f4f8;
+  --text-secondary: #94a3b8;
+  --text-muted: #475569;
+  --text-heading: #ffffff;
 
-  /* Accent – electric blue  */
-  --accent: #3b82f6;
-  --accent-hover: #60a5fa;
-  --accent-dim: rgba(59, 130, 246, 0.12);
-  --accent-glow: rgba(59, 130, 246, 0.35);
+  /* Accent – Cyber Cyan  */
+  --accent: #00f0ff;
+  --accent-hover: #33f3ff;
+  --accent-dim: rgba(0, 240, 255, 0.08);
+  --accent-glow: rgba(0, 240, 255, 0.35);
 
   /* Status */
   --status-completed: #10b981;
@@ -37,8 +37,8 @@
   --status-pending: #4a5568;
 
   /* Typography */
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-sans: 'Outfit', 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
 
   /* Radii */
   --radius-sm: 6px;
@@ -118,8 +118,11 @@ p {
 }
 
 code,
-pre {
+pre,
+.font-mono {
   font-family: var(--font-mono);
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
 }
 
 /* ──────────────────────────────────────────
@@ -254,12 +257,13 @@ pre {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
+  background: var(--border-muted);
   border-radius: 99px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-dim);
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent-glow);
 }
 
 /* ──────────────────────────────────────────

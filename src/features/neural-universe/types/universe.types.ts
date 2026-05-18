@@ -24,6 +24,7 @@ export interface UniverseData {
     blackops_count: number;
     mw_count: number;
     total_nodes: number;
+    spatial_density?: number;
   };
 }
 

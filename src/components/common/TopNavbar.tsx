@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSessionStore } from "../../features/auth/stores/sessionStore";
+import { Activity, BarChart3, BrainCircuit, Globe, Settings, Terminal, LogOut, Menu, X } from 'lucide-react';
 
 const NAV_LINKS = [
-    { to: "/", label: "Ingestion", icon: '🎬' },
-    { to: "/insights", label: "Insights", icon: '📊' },
-    { to: "/simulator", label: "Simulator", icon: '🧠' },
-    { to: "/neural-universe", label: "Universe", icon: '🌌' },
-    { to: "/system", label: "System", icon: '⚙️', adminOnly: true },
-    { to: "/admin/dlq", label: "Admin", icon: '🛡️', adminOnly: true },
+    { to: "/", label: "Ingestion", icon: <Terminal size={18} /> },
+    { to: "/insights", label: "Insights", icon: <BarChart3 size={18} /> },
+    { to: "/simulator", label: "Simulator", icon: <BrainCircuit size={18} /> },
+    { to: "/neural-universe", label: "Universe", icon: <Globe size={18} /> },
+    { to: "/system", label: "System", icon: <Settings size={18} />, adminOnly: true },
+    { to: "/admin/dlq", label: "Admin", icon: <Activity size={18} />, adminOnly: true },
 ];
 
 export const TopNavbar: React.FC = () => {
@@ -28,10 +29,10 @@ export const TopNavbar: React.FC = () => {
     return (
         <header
             style={{
-                background: "rgba(13, 17, 23, 0.8)",
-                borderBottom: "1px solid var(--border)",
+                background: "var(--bg-surface)",
+                borderBottom: "1px solid var(--border-muted)",
             }}
-            className="sticky top-0 z-50 backdrop-blur-md"
+            className="sticky top-0 z-50"
         >
             <div className="max-w-5xl mx-auto px-6 h-18 flex items-center justify-between transition-all duration-300">
                 {/* Logo */}
@@ -61,19 +62,21 @@ export const TopNavbar: React.FC = () => {
                 {/* Desktop Nav */}
                 <nav className="hidden md:flex items-center gap-4">
                     <div className="flex items-center gap-2">
-                        {visibleLinks.map(({ to, label }) => {
+                        {visibleLinks.map(({ to, label, icon }) => {
                             const isActive = location.pathname === to;
                             return (
                                 <Link
                                     key={to}
                                     to={to}
-                                    className="px-5 py-2.5 rounded-xl text-sm font-bold no-underline transition-all duration-200 hover:bg-white/5 uppercase tracking-tight"
+                                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-[11px] font-bold no-underline transition-all duration-200 hover:bg-white/5 uppercase tracking-widest"
                                     style={{
-                                        color: isActive ? "var(--text-heading)" : "var(--text-secondary)",
-                                        background: isActive ? "var(--bg-muted)" : "transparent",
-                                        border: isActive ? "1px solid var(--border)" : "1px solid transparent"
+                                        color: isActive ? "var(--accent)" : "var(--text-secondary)",
+                                        background: isActive ? "var(--accent-dim)" : "transparent",
+                                        border: isActive ? "1px solid var(--border-glow)" : "1px solid transparent",
+                                        boxShadow: isActive ? "inset 0 0 10px var(--accent-dim)" : "none"
                                     }}
                                 >
+                                    <span style={{ color: isActive ? "var(--accent)" : "inherit", opacity: isActive ? 1 : 0.6 }}>{icon}</span>
                                     {label}
                                 </Link>
                             );
@@ -91,9 +94,9 @@ export const TopNavbar: React.FC = () => {
                             </div>
                             <button
                                 onClick={handleLogout}
-                                className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-red-500/10 hover:border-red-500/20 transition-all group"
+                                className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-red-500/10 hover:border-red-500/20 text-red-500/50 hover:text-red-400 transition-all group"
                             >
-                                <span className="opacity-40 group-hover:opacity-100 transition-opacity">🚪</span>
+                                <LogOut size={16} />
                             </button>
                         </div>
                     ) : (
@@ -103,10 +106,10 @@ export const TopNavbar: React.FC = () => {
 
                 {/* Mobile Toggle */}
                 <button
-                    className="md:hidden w-10 h-10 rounded-xl flex items-center justify-center bg-white/5 border border-white/10"
+                    className="md:hidden w-10 h-10 rounded-xl flex items-center justify-center bg-white/5 border border-white/10 text-white"
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
                 >
-                    <span className="text-xl">{isMenuOpen ? '✕' : '☰'}</span>
+                    {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
                 </button>
             </div>
 
@@ -139,7 +142,7 @@ export const TopNavbar: React.FC = () => {
                                 onClick={() => { handleLogout(); setIsMenuOpen(false); }}
                                 className="flex items-center gap-4 px-6 py-4 rounded-2xl text-base font-bold text-red-400 bg-red-500/5 border border-red-500/10"
                             >
-                                <span>🚪</span>
+                                <LogOut size={20} />
                                 Logout
                             </button>
                         )}
